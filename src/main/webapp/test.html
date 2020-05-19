@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href="css/toastr.css" rel="stylesheet"/>
+
+
+    <link rel="stylesheet" href="css/main.css" />
+    <title>Edit Profile | ShareImage</title>
+</head>
+
+<body style="background-color:gainsboro;">
+
+
+    <!-- Page Content -->
+    <div class="container-v1">
+        <div class="container py-5">
+            <div class="text-white text-center">
+                <h1 class="display-4">Admin Tools</h1>
+            </div>
+
+            <form id="imageInfo" class="needs-validation" enctype="multipart/form-data" action="" method="post"
+                onsubmit="return false;" novalidate>
+                <div class="row py-4 bg-l">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="text-light py-4">
+                            <h2>Delete a image</h2>
+                            <hr class="colorgraph">
+                            <div class="form-row py-2">
+                                <div class="col-10">
+                                    <input type="text" name="imageId" id="image-id" class="form-control input-lg"
+                                           placeholder="imageId to delete" tabindex="1" required>
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-danger btn-block rounded-pill">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-light py-4">
+                            <h2>Delete a comment</h2>
+                            <hr class="colorgraph">
+                            <div class="form-row py-2">
+                                <div class="col-10">
+                                    <input type="text" name="commentId" id="comment-id" class="form-control input-lg"
+                                           placeholder="commentId to delete" tabindex="1" required>
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-danger btn-block rounded-pill">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="container" style="height: 70px"></div>
+    </div>
+
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/19a7b2457d.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+    <script src="js/jquery.twbsPagination.js"></script>
+    <script src="css/toastr.js"></script>
+    <script type="application/javascript">
+        function addFav() {
+            javascript:window.external.AddFavorite('http://www.csdn.net/','csdn');
+        }
+
+
+        function initImageInfoData(imageId) {
+            // var imageId = '${imageId}';
+
+            var imageData = getImageInfoById(imageId);
+            document.getElementById("imageResult").src = imageData.path;
+            document.getElementById("title").value = imageData.title;
+            document.getElementById("tags").value = imageData.tags;
+            document.getElementById("description").value = imageData.description;
+
+        }
+
+        function updateImage() {
+            var form = document.getElementById("imageInfo");
+            var formData = new FormData(form);
+            if (form.checkValidity() === false) {
+                return false;
+            }
+            var ajaxSuccess = false;
+            $.ajax({
+                async: false,
+                type: 'POST',
+                data: formData,
+                url: 'v1/image',
+                contentType:false,
+                processData: false,
+                success: function(result) {
+                    // TODO success message handler
+                    var imageId = result.imageId;
+                    var newUrl = "v1/view/image/" + imageId;
+                    ajaxSuccess = true;
+                    window.location.href = newUrl;
+                },
+                error: function(result) {
+                    alert("Error occur");
+                }
+            });
+        }
+
+
+        function getImageTestData() {
+            return JSON.parse("{\"imageId\":\"4028d781717e08e501717e0bda770000\",\"title\":\"tas1\",\"path\":\"images/img/e0328c07-09f8-4a34-9654-4a4f66d81862_battlefield_4_game_soldier_army_4000x2250.jpg\",\"type\":\"jpg\",\"resolutionW\":0,\"resolutionH\":0,\"views\":21,\"downloads\":0,\"tags\":\"tags1;tag2;tag3\",\"description\":\"123\",\"username\":\"test\",\"createTime\":\"Apr 15 2020\",\"updateTime\":\"Apr 19 2020\",\"numComments\":0}");
+        }
+
+        /*
+       Bootstrap custom form validation
+    */
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                // var forms = document.getElementsByClassName('needs-validation');
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+
+</html>

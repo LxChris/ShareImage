@@ -1,0 +1,274 @@
+openapi: 3.0.0
+servers:
+# Added by API Auto Mocking Plugin
+  - description: LocalServer
+    url: 'https://Localhost:8080/ShareImage/1.0.0'
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/LxChris/ShareImage/1.0.0
+
+info:
+  description: The Specification of ShareImage API
+  version: 1.0.0
+  title: ShareImage API
+  contact:
+    email: zhou.lix@husky.neu.edu
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: User
+  - name: Admins
+    description: Secured Admin-only
+  - name: Editor
+    description: Secured Editor-only
+paths:
+  /v1/user:
+    post:
+      tags:
+        - User
+      summary:  Create a user
+      description: Create a user
+      parameters:
+        - in: query
+          name: username
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    example: 4028d7817165934b017165945ffb0000
+                    
+        '400':
+          description: Bad Request
+  /v1/user/self:
+    put:
+      tags:
+        - User
+      summary: Update current user's information
+      description: Update user information
+      parameters:
+        - in: path
+          name: firstName
+          description: first name of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: lastName
+          description: last name of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: gender
+          description: gender of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: password
+          description: password of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    get:
+      tags:
+        - User
+      description: 'Retrieve user information '
+      parameters: []
+      responses:
+        '200':
+          description: OK
+  /v1/image:
+    post:
+      tags:
+        - User
+      summary: Upload and create an image
+      description: Create a new image 
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+                  example: myImage.jpg
+                title:
+                  type: string
+                  description: the title of an image
+                  example: Amazing Images
+                tags:
+                  type: string
+                description:
+                  type: string
+      # parameters:
+      #   - in: path
+      #     name: title
+      #     description: the title of the image
+      #     required: true
+      #     example: Happiness
+      #     schema: 
+      #       type: string
+      #   - in: path
+      #     name: tags
+      #     description: the tags of the image
+      #     required: true
+      #     example: Photo;Record
+      #     schema: 
+      #       type: string
+      #   - in: path
+      #     name: description
+      #     description: the description of the image
+      #     required: true
+      #     example: This photo is taken at 03/02/2020
+      #     schema: 
+      #       type: string
+      #   - in: path
+      #     name: image
+      #     description: The upload file
+      #     required: true
+      #     example: photo.jpg
+      #     schema: 
+      #       type: object
+      responses:
+        '200':
+          description: OK
+  /v1/image/{imageId}:
+    get:
+      tags:
+        - User
+      description: Retrieve the information of image
+      parameters:
+        - in: path
+          name: imageId
+          description: the UUID of a image
+          required: true
+          example: 4028d781716efc2201716f2088a20001
+          schema:
+            type: string   
+      responses:
+        '200':
+          description: OK
+    put:
+      tags:
+        - User
+      description: Implementating
+      parameters:
+        - in: path
+          name: imageId
+          description: the UUID of a image
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+    delete:
+      tags:
+        - User
+      description: Delete a image
+      parameters:
+        - in: path
+          name: imageId
+          description: the UUID of a image
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+  /v1/image/{imageId}/comment:
+    post:
+      tags:
+        - User
+      description: Create a comment for a image
+      parameters:
+        - in: path
+          name: imageId
+          description: the UUID of a image
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+  /v1/comment/{commentId}:
+    get:
+      tags:
+        - User
+      description: retrieve a comment
+      parameters:
+        - in: path
+          name: commentId
+          description: the UUID of a comment
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - User
+      description: retrieve a comment
+      parameters:
+        - in: path
+          name: commentId
+          description: the UUID of a comment
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+    delete:
+      tags:
+        - User
+      description: delete a comment
+      parameters:
+        - in: path
+          name: commentId
+          description: the UUID of a comment
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
