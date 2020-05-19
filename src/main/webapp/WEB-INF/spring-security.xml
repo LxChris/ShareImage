@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/security
+        https://www.springframework.org/schema/security/spring-security-5.3.xsd">
+
+
+    <http pattern="/css/**" security="none" />
+    <http pattern="/fonts/**" security="none" />
+    <http pattern="/images/**" security="none" />
+    <http pattern="/js/**" security="none" />
+    <http pattern="/vendor/**" security="none" />
+
+    <http auto-config="true" use-expressions="true">
+
+        <!-- API -->
+        <!-- fixme remove in the future -->
+        <intercept-url pattern="/test" access="permitAll()" />
+
+        <intercept-url pattern="/v1/user" access="permitAll()"/>
+        <intercept-url pattern="/v1/user/avatar/{username}" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/image/all/{pageNum}" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/iamge/search**" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/image/{imageId}" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/image/{imageId}/allComment" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/image/download/{imageId}" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/comment/{commentId}" access="permitAll()" method="GET" />
+
+        <!-- View url -->
+        <intercept-url pattern="/" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/index" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/logout" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/view/404" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/view/image/{imageId}" access="permitAll()" method="GET" />
+        <intercept-url pattern="/v1/view/login" access="permitAll()"  method="GET" />
+        <intercept-url pattern="/v1/view/register" access="permitAll()" method="GET"/>
+        <intercept-url pattern="/v1/view/search**" access="permitAll()" method="GET" />
+
+        <!-- FIXME change it after test -->
+        <intercept-url pattern="/**" access="authenticated" />
+<!--        <intercept-url pattern="/**" access="permitAll()" />-->
+
+        <form-login
+                login-page="/v1/view/login"
+                authentication-failure-url="/v1/view/login?error=error"
+                username-parameter="username"
+                password-parameter="password"
+                login-processing-url="/login"
+                authentication-success-handler-ref="customAuthenticationSuccessHandler"
+                />
+        <logout
+                logout-url="/logout"
+                logout-success-url="/v1/view/login?logout=logout"
+                invalidate-session="true"
+                />
+        <access-denied-handler error-page="/v1/view/404" />
+        <csrf disabled="true" />
+    </http>
+
+    <beans:bean id="customAuthenticationSuccessHandler" class="neu.edu.config.CustomAuthenticationSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/"/>
+        <beans:property name="alwaysUseDefaultTargetUrl" value="false" />
+    </beans:bean>
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+    <authentication-manager>
+        <authentication-provider user-service-ref="userService">
+            <password-encoder ref="passwordEncoder" />
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>
